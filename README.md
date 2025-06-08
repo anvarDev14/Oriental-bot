@@ -1,1 +1,1 @@
-# kinobot
+# kino_kod_bot
