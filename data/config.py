@@ -11,8 +11,8 @@ env.read_env()
 
 # .env fayl ichidan ma'lumotlarni o'qiymiz
 BOT_TOKEN = env.str("BOT_TOKEN")
-ADMINS = env.list("ADMINS", subcast=int, default=[])  # Agar ADMINS bo'sh bo'lsa, bo'sh ro'yxat
-IP = env.str("ip", default="localhost")
+IP = env.str("IP", default="localhost")  # Katta harf bilan IP
+ADMINS = env.list("ADMINS", subcast=int, default=[])  # Vergul bilan ajratilgan ro'yxat
 
 def update_env_admins(admins: list):
     """ADMINS ro'yxatini .env faylida yangilash."""
@@ -20,10 +20,15 @@ def update_env_admins(admins: list):
         with open(".env", "r", encoding="utf-8") as file:
             lines = file.readlines()
         with open(".env", "w", encoding="utf-8") as file:
+            found_admins = False
             for line in lines:
-                if not line.strip().startswith("ADMINS="):
+                if line.strip().startswith("ADMINS="):
+                    file.write(f"ADMINS={','.join(map(str, admins))}\n")
+                    found_admins = True
+                else:
                     file.write(line)
-            file.write(f"ADMINS={','.join(map(str, admins))}\n")
+            if not found_admins:
+                file.write(f"ADMINS={','.join(map(str, admins))}\n")
         # Config'ni qayta yuklash
         global ADMINS
         env.read_env(override=True)  # .env faylini qayta o'qish
@@ -43,3 +48,6 @@ def update_env_admins(admins: list):
 logger.info(f"BOT_TOKEN: {BOT_TOKEN}")
 logger.info(f"ADMINS: {ADMINS}")
 logger.info(f"IP: {IP}")
+
+# Test uchun avtomatik yangilash
+update_env_admins([6369838846])  # Bot ishga tushganda ADMINS ni yangilash
