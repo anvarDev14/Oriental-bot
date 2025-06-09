@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: kinobot
     environment:
-      - BOT_TOKEN=${BOT_TOKEN}
+      - BOT_TOKEN=8136303197:AAGca1U7nd_-1zrM9cUuvUMvzy45PHQvc0I
     volumes:
       - ./data:/app/data  # Ma'lumotlarni saqlash uchun jild
     restart: unless-stopped  # Konteyner o'chganda avto-qayta ishga tushadi
