@@ -17,7 +17,7 @@ storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
 # Database path - /tmp papkasida (har doim yozish mumkin)
-DB_PATH = "/tmp/main.db"
+DB_PATH = "main.db"
 
 # Yoki URI mode ishlatish
 # DB_PATH = "file:main.db?mode=memory&cache=shared"
