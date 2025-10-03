@@ -28,8 +28,6 @@ share/python-wheels/
 MANIFEST
 
 # PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
 
@@ -85,13 +83,9 @@ ipython_config.py
 .python-version
 
 # pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
 #Pipfile.lock
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+# PEP 582
 __pypackages__/
 
 # Celery stuff
@@ -102,8 +96,10 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+.env
+.env.local
+.env.production
 .venv
-*/.env
 env/
 venv/
 ENV/
@@ -127,10 +123,45 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-.idea/*
-.env
 
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
 
-# database files
+# Database files
 *.db
+*.sqlite
+*.sqlite3
+*.db-journal
+main.db
 data/*.db
+
+# Logs
+logs/
+*.log.*
+
+# Backup files
+*.bak
+*.backup
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# OS files
+Thumbs.db
+
+# Bot specific
+# Agar test fayllaringiz bo'lsa
+test_*.py
+temp/
+tmp/
+
+# Credentials (agar alohida faylda bo'lsa)
+credentials.json
+token.txt
+config.ini

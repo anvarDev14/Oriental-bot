@@ -1,65 +1,80 @@
+"""
+Channel Database - Optimallashtirilgan
+"""
 import sqlite3
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class ChannelDB:
     def __init__(self, path_to_db):
         self.path_to_db = path_to_db
-        self.conn = sqlite3.connect(path_to_db, check_same_thread=False)  # Multi-threading uchun
+        self.conn = sqlite3.connect(path_to_db, check_same_thread=False)
         self.cursor = self.conn.cursor()
         self.create_table()
-        self.channels = self.load_channels()  # Jadvaldagi kanallarni yuklab olish
 
     def create_table(self):
         """Kanallar jadvalini yaratish"""
-        self.cursor.execute(''' 
+        self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS channels (
                 channel_id INTEGER PRIMARY KEY,
                 title TEXT NOT NULL,
-                static_link TEXT NOT NULL DEFAULT ''
+                invite_link TEXT NOT NULL DEFAULT ''
             )
         ''')
         self.conn.commit()
+        logger.info("✅ Channels table ready")
 
-    def load_channels(self):
-        """Jadvaldagi kanallarni yuklab olish"""
-        self.cursor.execute("SELECT channel_id, title, static_link FROM channels")
-        return {channel_id: (title, static_link) for channel_id, title, static_link in self.cursor.fetchall()}
-
-    def add_channel(self, channel_id, title, static_link):
-        """Yangi kanalni jadvalga qo‘shish"""
-        if not self.channel_exists(channel_id):  # Agar kanal mavjud bo‘lmasa
-            self.cursor.execute("INSERT INTO channels (channel_id, title, static_link) VALUES (?, ?, ?)",
-                                (channel_id, title, static_link))
+    def add_channel(self, channel_id, title, invite_link):
+        """Kanal qo'shish"""
+        try:
+            self.cursor.execute(
+                "INSERT OR REPLACE INTO channels VALUES (?, ?, ?)",
+                (channel_id, title, invite_link)
+            )
             self.conn.commit()
-            self.channels[channel_id] = (title, static_link)
+            logger.info(f"➕ Kanal: {title}")
             return True
-        return False
+        except Exception as e:
+            logger.error(f"Kanal qo'shish xatosi: {e}")
+            return False
+
+    def get_all_channels(self):
+        """Barcha kanallar"""
+        self.cursor.execute("SELECT channel_id, title, invite_link FROM channels")
+        return self.cursor.fetchall()
+
+    def get_channel(self, channel_id):
+        """Bitta kanal"""
+        self.cursor.execute(
+            "SELECT * FROM channels WHERE channel_id=?",
+            (channel_id,)
+        )
+        return self.cursor.fetchone()
+
+    def delete_channel(self, channel_id):
+        """Kanalni o'chirish"""
+        try:
+            self.cursor.execute("DELETE FROM channels WHERE channel_id=?", (channel_id,))
+            self.conn.commit()
+            logger.info(f"🗑 Kanal deleted: {channel_id}")
+            return True
+        except Exception as e:
+            logger.error(f"Kanal o'chirish xatosi: {e}")
+            return False
 
     def channel_exists(self, channel_id):
         """Kanal mavjudligini tekshirish"""
-        self.cursor.execute("SELECT 1 FROM channels WHERE channel_id = ?", (channel_id,))
+        self.cursor.execute("SELECT 1 FROM channels WHERE channel_id=?", (channel_id,))
         return bool(self.cursor.fetchone())
 
-    def get_channel_link(self, channel_id):
-        """Kanal havolasini olish"""
-        self.cursor.execute("SELECT static_link FROM channels WHERE channel_id = ?", (channel_id,))
+    def count_channels(self):
+        """Kanallar soni"""
+        self.cursor.execute("SELECT COUNT(*) FROM channels")
         result = self.cursor.fetchone()
-        return result[0] if result else None
-
-    def get_all_channels(self):
-        """Barcha kanallarni olish"""
-        self.cursor.execute("SELECT channel_id, title, static_link FROM channels")
-        return self.cursor.fetchall()
-
-    def delete_channel(self, channel_id):
-        """Kanalni o‘chirish"""
-        if self.channel_exists(channel_id):
-            self.cursor.execute("DELETE FROM channels WHERE channel_id = ?", (channel_id,))
-            self.conn.commit()
-            if channel_id in self.channels:
-                del self.channels[channel_id]
-            return True
-        return False
+        return result[0] if result else 0
 
     def close(self):
-        """Ma'lumotlar bazasi ulanishini yopish"""
+        """Ulanishni yopish"""
         self.conn.close()

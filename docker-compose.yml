@@ -3,9 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: kinobot
+    container_name: Oriental_bot
     environment:
-      - BOT_TOKEN=8136303197:AAGca1U7nd_-1zrM9cUuvUMvzy45PHQvc0I
+      - BOT_TOKEN=8245544520:AAHowYT2R1s_DN_4ReV-yks05qKfgsW1h-I
     volumes:
       - ./data:/app/data  # Ma'lumotlarni saqlash uchun jild
     restart: unless-stopped  # Konteyner o'chganda avto-qayta ishga tushadi

@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup,KeyboardButton
 
 
-menu_movie=ReplyKeyboardMarkup(
+confirm_menu=ReplyKeyboardMarkup(
     keyboard=[
         [
             KeyboardButton(text="✅Tasdiqlash"),
@@ -12,6 +12,3 @@ menu_movie=ReplyKeyboardMarkup(
     one_time_keyboard=True
 
 )
-
-
-
