@@ -8,9 +8,12 @@ services:
     env_file:
       - .env
     volumes:
-      - ./main.db:/app/main.db
+      - db-data:/app/data
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
+
+volumes:
+  db-data:
