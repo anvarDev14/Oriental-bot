@@ -1,7 +1,5 @@
-"""
-Channel Database - Optimallashtirilgan
-"""
 import sqlite3
+import os
 import logging
 
 logger = logging.getLogger(__name__)
@@ -10,9 +8,23 @@ logger = logging.getLogger(__name__)
 class ChannelDB:
     def __init__(self, path_to_db):
         self.path_to_db = path_to_db
+
+        # Database faylini avval yaratish
+        db_dir = os.path.dirname(path_to_db)
+        if db_dir and not os.path.exists(db_dir):
+            os.makedirs(db_dir, exist_ok=True)
+
+        if not os.path.exists(path_to_db):
+            try:
+                open(path_to_db, 'a').close()
+                logger.info(f"Database fayl yaratildi: {path_to_db}")
+            except Exception as e:
+                logger.error(f"Database yaratish xatosi: {e}")
+
         self.conn = sqlite3.connect(path_to_db, check_same_thread=False)
         self.cursor = self.conn.cursor()
         self.create_table()
+
 
     def create_table(self):
         """Kanallar jadvalini yaratish"""
