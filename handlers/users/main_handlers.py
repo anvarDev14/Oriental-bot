@@ -274,7 +274,7 @@ async def support(message: types.Message):
     """Yordam"""
     await message.answer(
         "📞 <b>Yordam</b>\n\n"
-        "📧 admin@oriental.uz\n"
+        "📧 @anvarDev1423 \n"
         "📱 @anvarcode\n\n"
         "🔰 Savol-javoblar uchun admin bilan bog'laning",
         parse_mode="HTML"
