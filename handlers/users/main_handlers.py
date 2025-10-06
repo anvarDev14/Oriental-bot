@@ -169,10 +169,21 @@ async def show_darslar_page(message, user_id):
     mavzu_name = data['mavzu']
     faculty_name = data['faculty']
 
-    total_pages = (len(darslar) + DARS_PER_PAGE - 1) // DARS_PER_PAGE
+    # Darslarni aqlli saralash (raqamli tartib)
+    def natural_sort_key(dars):
+        """Raqamlarni to'g'ri saralash uchun"""
+        import re
+        title = dars['title']
+        # Raqamlarni topish va int ga aylantirish
+        parts = re.split(r'(\d+)', title)
+        return [int(part) if part.isdigit() else part.lower() for part in parts]
+
+    darslar_sorted = sorted(darslar, key=natural_sort_key)
+
+    total_pages = (len(darslar_sorted) + DARS_PER_PAGE - 1) // DARS_PER_PAGE
     start_idx = page * DARS_PER_PAGE
     end_idx = start_idx + DARS_PER_PAGE
-    current_darslar = darslar[start_idx:end_idx]
+    current_darslar = darslar_sorted[start_idx:end_idx]
 
     markup = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 
@@ -226,7 +237,7 @@ async def show_darslar_page(message, user_id):
         f"📚 <b>{faculty_name}</b>\n"
         f"📖 <b>{mavzu_name}</b>\n\n"
         f"{dars_list}\n"
-        f"📊 Jami: {len(darslar)} ta | Sahifa: {page + 1}/{total_pages}"
+        f"📊 Jami: {len(darslar_sorted)} ta | Sahifa: {page + 1}/{total_pages}"
     )
 
     await message.answer(text, reply_markup=markup, parse_mode="HTML")
@@ -269,7 +280,15 @@ async def select_dars_by_number(message: types.Message):
 
     dars_number = int(message.text)
     data = user_pagination[user_id]
-    darslar = data['darslar']
+
+    # Darslarni saralash (xuddi ko'rsatilgandek)
+    import re
+    def natural_sort_key(dars):
+        title = dars['title']
+        parts = re.split(r'(\d+)', title)
+        return [int(part) if part.isdigit() else part.lower() for part in parts]
+
+    darslar = sorted(data['darslar'], key=natural_sort_key)
 
     # Dars indeksini hisoblash
     dars_index = dars_number - 1
